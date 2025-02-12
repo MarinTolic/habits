@@ -12,6 +12,7 @@ class MealService(database: Database) {
 
     object Meals : Table() {
         val id = integer("id").autoIncrement()
+        val uuid = varchar("uuid", 255)
         val name = varchar("name", length = 50)
         val quantity = integer("quantity")
 
@@ -30,6 +31,7 @@ class MealService(database: Database) {
     suspend fun create(meal: Meal): Int = dbQuery {
         Meals.insert {
             it[name] = meal.name
+            it[uuid] = meal.uuid
             it[quantity] = meal.weight
             it[averageEnergy] = meal.averageNutritionalValue.energy
             it[averageProtein] = meal.averageNutritionalValue.protein
@@ -58,6 +60,7 @@ class MealService(database: Database) {
         dbQuery {
             Meals.update({ Meals.id eq id }) {
                 it[name] = meal.name
+                it[uuid] = meal.uuid
                 it[quantity] = meal.weight
                 it[averageEnergy] = meal.averageNutritionalValue.energy
                 it[averageProtein] = meal.averageNutritionalValue.protein
@@ -77,6 +80,7 @@ class MealService(database: Database) {
         newSuspendedTransaction(Dispatchers.IO) { block() }
 
     private fun ResultRow.toMeal() = Meal(
+        uuid = this[Meals.uuid],
         name = this[Meals.name],
         weight = this[Meals.quantity],
         averageNutritionalValue = NutritionalValue(

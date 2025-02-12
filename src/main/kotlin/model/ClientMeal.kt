@@ -1,19 +1,17 @@
 package com.example.model
 
 import kotlinx.serialization.Serializable
-import java.util.*
+import java.util.UUID
 
 /**
- * Represents a single meal the user has consumed.
+ * Represents a single meal the user has consumed as sent from the client, without server assigned ID.
  *
- * @param uuid the unique identifier of the meal.
  * @param name The name of the meal.
  * @param weight The weight of the meal, expressed in grams.
  * @param averageNutritionalValue The nutritional value of the meal expressed as an average, per 100g.
  */
 @Serializable
-data class Meal(
-    val uuid: String = UUID.randomUUID().toString(),
+data class ClientMeal(
     val name: String,
     val weight: Int,
     val averageNutritionalValue: NutritionalValue,
@@ -23,4 +21,11 @@ data class Meal(
      * The total nutritional value of the meal.
      */
     val totalNutritionalValue: NutritionalValue = averageNutritionalValue.times(weight)
+
+    fun toMeal() = Meal(
+        uuid = UUID.randomUUID().toString(),
+        name = this.name,
+        weight = this.weight,
+        averageNutritionalValue = averageNutritionalValue,
+    )
 }

@@ -2,7 +2,7 @@ package com.example.routing
 
 import com.example.database.MealService
 import com.example.database.mealService
-import com.example.model.Meal
+import com.example.model.ClientMeal
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
@@ -33,8 +33,8 @@ private fun Routing.mealRoutes(mealService: MealService) {
      * Route used to create a meal.
      */
     post("/meals") {
-        val meal = call.receive<Meal>()
-        val id = mealService.create(meal)
+        val clientMeal = call.receive<ClientMeal>()
+        val id = mealService.create(clientMeal.toMeal())
         call.respond(HttpStatusCode.Created, id)
     }
 
@@ -65,8 +65,8 @@ private fun Routing.mealRoutes(mealService: MealService) {
      */
     put("/meals/{id}") {
         val id = call.parameters["id"]?.toInt() ?: throw IllegalArgumentException("Invalid ID")
-        val meal = call.receive<Meal>()
-        mealService.update(id, meal)
+        val clientMeal = call.receive<ClientMeal>()
+        mealService.update(id, clientMeal.toMeal())
         call.respond(HttpStatusCode.OK)
     }
 
